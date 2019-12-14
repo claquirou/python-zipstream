@@ -178,6 +178,10 @@ class ZipFile(zipfile.ZipFile):
         self.paths_to_write = []
 
     def __iter__(self):
+        for data in self.__iter():
+            yield data
+
+    def __iter(self):
         for data in self.flush():
             yield data
         for data in self.__close():

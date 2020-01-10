@@ -300,8 +300,9 @@ class ZipFile(zipfile.ZipFile):
         zinfo.CRC = CRC = 0
         zinfo.compress_size = compress_size = 0
         # Compressed size can be larger than uncompressed size
-        zip64 = self._allowZip64 and \
-                zinfo.file_size * 1.05 > ZIP64_LIMIT
+        #zip64 = self._allowZip64 and \
+        #        zinfo.file_size * 1.05 > ZIP64_LIMIT
+        zip64 = True
         yield self.fp.write(zinfo.FileHeader(zip64))
         file_size = 0
         if filename:

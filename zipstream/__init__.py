@@ -177,12 +177,12 @@ class ZipFile(zipfile.ZipFile):
         # TODO: Refractor to write queue with args + kwargs matching write()
         self.paths_to_write = []
 
-    def __iter__(self):
-        for data in self.__iter():
+    async def __aiter__(self):
+        async for data in self.__iter():
             yield data
 
-    def __iter(self):
-        for data in self.flush():
+    async def __iter(self):
+        async for data in self.flush():
             yield data
         for data in self.__close():
             yield data
@@ -193,10 +193,10 @@ class ZipFile(zipfile.ZipFile):
     def __exit__(self, type, value, traceback):
         self.close()
 
-    def flush(self):
+    async def flush(self):
         while self.paths_to_write:
             kwargs = self.paths_to_write.pop(0)
-            for data in self.__write(**kwargs):
+            async for data in self.__write(**kwargs):
                 yield data
 
     @property
@@ -237,7 +237,7 @@ class ZipFile(zipfile.ZipFile):
             yield data
         return self.write_iter(arcname, _iterable(), compress_type=compress_type, buffer_size=buffer_size)
 
-    def __write(self, filename=None, iterable=None, arcname=None, compress_type=None, buffer_size=None):
+    async def __write(self, filename=None, iterable=None, arcname=None, compress_type=None, buffer_size=None):
         """Put the bytes from filename into the archive under the name
         `arcname`."""
         if not self.fp:
@@ -318,7 +318,7 @@ class ZipFile(zipfile.ZipFile):
                         compress_size = compress_size + len(buf)
                     yield self.fp.write(buf)
         else: # we have an iterable
-            for buf in iterable:
+            async for buf in iterable:
                 file_size = file_size + len(buf)
                 CRC = crc32(buf, CRC) & 0xffffffff
                 if cmpr:
@@ -456,3 +456,4 @@ class ZipFile(zipfile.ZipFile):
             self.fp = None
             if not self._filePassed:
                 fp.close()
+

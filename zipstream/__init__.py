@@ -94,7 +94,7 @@ class PointerIO(object):
 
         if isinstance(data, str):
             data = data.encode('utf-8')
-        if not isinstance(data, bytes):
+        if not isinstance(data, (bytes, bytearray)):
             raise TypeError('expected bytes')
         self.data_pointer += len(data)
         return data
